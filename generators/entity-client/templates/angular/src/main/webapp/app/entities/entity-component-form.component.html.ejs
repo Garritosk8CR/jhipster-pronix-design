@@ -1,0 +1,237 @@
+<%#
+ Copyright 2013-2018 the original author or authors from the JHipster project.
+
+ This file is part of the JHipster project, see https://www.jhipster.tech/
+ for more information.
+
+ Licensed under the Apache License, Version 2.0 (the "License");
+ you may not use this file except in compliance with the License.
+ You may obtain a copy of the License at
+
+      http://www.apache.org/licenses/LICENSE-2.0
+
+ Unless required by applicable law or agreed to in writing, software
+ distributed under the License is distributed on an "AS IS" BASIS,
+ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ See the License for the specific language governing permissions and
+ limitations under the License.
+-%>
+<nz-card *ngIf="!<%= entityInstance %>" [nzBordered]="false" nzLoading></nz-card>
+<form *ngIf="<%= entityInstance %>" nz-form [formGroup]="validateForm" (ngSubmit)="save($event,validateForm.value)">
+    <ng-container [ngSwitch]="mode">
+        <ng-container *ngSwitchCase="'cardForm'">
+            <nz-card [nzBordered]="true" nzTitle="基础" [nzExtra]="extraTemplate">
+                <ng-container [ngTemplateOutlet]="basicForm"></ng-container>
+            </nz-card>
+            <ng-template #extraTemplate>
+                <nz-form-item style="margin-bottom: -8px;margin-top: -8px;">
+                    <nz-form-control>
+                        <button nz-button nzType="primary" [disabled]="!validateForm.valid || validateForm.pristine" [nzLoading]="isSaving">
+                            保存
+                        </button>
+                        <button class="ml-sm" nz-button (click)="reset($event)" [disabled]="isSaving || validateForm.pristine">重置</button>
+                    </nz-form-control>
+                </nz-form-item>
+            </ng-template>
+        </ng-container>
+        <ng-container *ngSwitchCase="'tabForm'">
+            <nz-tabset [nzTabPosition]="'left'">
+                <nz-tab [nzTitle]="'基础'">
+                    <nz-card class="tab-form-card" [nzBordered]="false"
+                             style="margin-left: -24px;margin-bottom: 0 !important;">
+                        <ng-container [ngTemplateOutlet]="basicForm"></ng-container>
+                    </nz-card>
+                </nz-tab>
+            </nz-tabset>
+        </ng-container>
+    </ng-container>
+    <ng-template #basicForm>
+        <nz-row nzGutter="16">
+        <nz-col [nzLg]="8" [nzMd]="12" [nzSm]="24">
+            <nz-form-item>
+                <nz-form-label [nzSpan]="null">ID</nz-form-label>
+                <nz-form-control [nzSpan]="null">
+                    <input nz-input value="{{<%= entityInstance %>.id}}" type="text" disabled/>
+                </nz-form-control>
+            </nz-form-item>
+        </nz-col>
+        <%_ for (idx in fields) {
+            const fieldName = fields[idx].fieldName;
+            const fieldNameCapitalized = fields[idx].fieldNameCapitalized;
+            const fieldNameHumanized = fields[idx].fieldNameHumanized;
+            const fieldType = fields[idx].fieldType;
+            const fieldTypeBlobContent = fields[idx].fieldTypeBlobContent;
+            const fieldTitle = fields[idx].javadoc || fields[idx].fieldNameHumanized;
+            let fieldInputType = 'text';
+            let ngModelOption = '';
+            const translationKey = `${i18nKeyPrefix}.${fieldName}`;
+            if (['Integer', 'Long', 'Float', 'Double', 'BigDecimal'].includes(fieldType)) {
+                fieldInputType = 'number';
+            } else if (fieldType === 'LocalDate') {
+                fieldInputType = 'date';
+            } else if (['Instant', 'ZonedDateTime'].includes(fieldType)) {
+                fieldInputType = 'datetime-local';
+            } else if (fieldType === 'Boolean') {
+                fieldInputType = 'checkbox';
+            } else if (['byte[]', 'ByteBuffer'].includes(fieldType) && fieldTypeBlobContent !== 'text') {
+                fieldInputType = 'hidden';
+            }
+            _%>
+            <nz-col [nzLg]="8" [nzMd]="12" [nzSm]="24">
+                <nz-form-item>
+                    <nz-form-label [nzSpan]="null" <% if (fields[idx].fieldValidate === true && fields[idx].fieldValidateRules.includes('required')) { %> nzRequired<% } %>><%= fieldTitle %></nz-form-label>
+                    <nz-form-control [nzSpan]="null" <% if (fields[idx].fieldValidate === true && fieldType !== 'Boolean') { %> nzHasFeedback<% } %>>
+                        <%_ if (fields[idx].fieldType === 'String') { _%>
+                        <input nz-input formControlName="<%= fieldName %>" placeholder="" type="text"/>
+                        <%_ } else if (['byte[]', 'ByteBuffer'].includes(fieldType) && fieldTypeBlobContent === 'text') { _%>
+                        <textarea nz-input formControlName="<%= fieldName %>" placeholder="" nzAutosize></textarea>
+                        <%_ } else if (['Integer', 'Long'].includes(fieldType)) { _%>
+                        <nz-input-number formControlName="<%= fieldName %>" [nzStep]="1"></nz-input-number>
+                        <%_ } else if (['Float', 'Double'].includes(fieldType)) { _%>
+                        <nz-input-number formControlName="<%= fieldName %>" [nzStep]="0.1"></nz-input-number>
+                        <%_ } else if (fieldType === 'BigDecimal') { _%>
+                        <nz-input-number formControlName="<%= fieldName %>" [nzStep]="0.01"></nz-input-number>
+                        <%_ } else if (fieldType === 'LocalDate') { _%>
+                        <nz-date-picker formControlName="<%= fieldName %>"></nz-date-picker>
+                        <%_ } else if (['Instant', 'ZonedDateTime'].includes(fieldType)) { _%>
+                        <nz-date-picker nzShowTime formControlName="<%= fieldName %>" placeholder=""></nz-date-picker>
+                        <%_ } else if (fieldType === 'Boolean') { _%>
+                        <nz-switch formControlName="<%= fieldName %>" type="checkbox"></nz-switch>
+                        <%_ } else if (['byte[]', 'ByteBuffer'].includes(fieldType) && fieldTypeBlobContent !== 'text') { _%>
+                        <input nz-input formControlName="<%= fieldName %>" type="hidden"/>
+                        <%_ } else if (fields[idx].fieldIsEnum) { _%>
+                        <nz-select formControlName="<%= fieldName %>" placeholder="" <% if (fields[idx].fieldValidate === true && fields[idx].fieldValidateRules.includes('required')) { %> nzAllowClear<% } %>>
+                            <nz-option *ngFor="let value of <%= fieldName %>Text.filter;"
+                                        [nzLabel]="value.text"
+                                        [nzValue]="value.value">
+                            </nz-option>
+                        </nz-select>
+                        <%_ } _%>
+                        <%_ if (fields[idx].fieldValidate) { _%>
+                        <nz-form-explain *ngIf="validateForm.get('<%= fieldName %>').dirty && validateForm.get('<%= fieldName %>').errors<%_ if (fields[idx].fieldValidate === true && fields[idx].fieldValidateRules.includes('unique')) { _%>   || validateForm.get('<%= fieldName %>').pending<%_ } _%>">
+                        <%_ for (idrx in fields[idx].fieldValidateRules) {
+                            const rule = fields[idx].fieldValidateRules[idrx] _%>
+                        <%_ if (rule === 'required') { _%>
+                            <ng-container *ngIf="validateForm.get('<%= fieldName %>').hasError('required')">
+                                请输入字段值
+                            </ng-container>
+                        <%_ } else if (rule === 'unique') { _%>
+                            <ng-container *ngIf="validateForm.get('<%= fieldName %>').hasError('duplicated')">
+                                已存在
+                            </ng-container>
+                            <ng-container *ngIf="validateForm.get('<%= fieldName %>').pending">
+                                检查中...
+                            </ng-container>
+                        <%_ } else if (rule === 'minlength') { _%>
+                            <ng-container *ngIf="validateForm.get('<%= fieldName %>').hasError('minlength')">
+                                请输入不少于 <%= fields[idx].fieldValidateRulesMinlength %> 个字符
+                            </ng-container>
+                        <%_ } else if (rule === 'maxlength') { _%>
+                            <ng-container *ngIf="validateForm.get('<%= fieldName %>').hasError('maxlength')">
+                                请输入不多于 <%= fields[idx].fieldValidateRulesMaxlength %> 个字符
+                            </ng-container>
+                        <%_ } else if (rule === 'min') { _%>
+                            <ng-container *ngIf="validateForm.get('<%= fieldName %>').hasError('min')">
+                                请输入不小于 <%= fields[idx].fieldValidateRulesMin %> 的数值
+                            </ng-container>
+                        <%_ } else if (rule === 'max') { _%>
+                            <ng-container *ngIf="validateForm.get('<%= fieldName %>').hasError('max')">
+                                请输入不大于 <%= fields[idx].fieldValidateRulesMax %> 的数值
+                            </ng-container>
+                        <%_ } else if (rule === 'pattern') { _%>
+                            <ng-container *ngIf="validateForm.get('<%= fieldName %>').hasError('pattern')">
+                                未符合 '<%= fields[idx].fieldValidateRulesPattern %>' 规则
+                            </ng-container>
+                        <%_ } _%>
+                        <%_ } _%>
+                        </nz-form-explain>
+                        <%_ } _%>
+                    </nz-form-control>
+                </nz-form-item>
+            </nz-col>
+        <%_ } _%>
+        <%_ for (idx in relationships) {
+                const relationshipType = relationships[idx].relationshipType;
+                const ownerSide = relationships[idx].ownerSide;
+                const otherEntityName = relationships[idx].otherEntityName;
+                const otherEntityNamePlural = relationships[idx].otherEntityNamePlural;
+                const otherEntityNameCapitalized = relationships[idx].otherEntityNameCapitalized;
+                const relationshipNameCapitalizedPlural = relationships[idx].relationshipNameCapitalizedPlural;
+                const relationshipName = relationships[idx].relationshipName;
+                const relationshipNameHumanized = relationships[idx].relationshipNameHumanized;
+                const relationshipFieldName = relationships[idx].relationshipFieldName;
+                const relationshipFieldNamePlural = relationships[idx].relationshipFieldNamePlural;
+                const otherEntityField = relationships[idx].otherEntityField;
+                const otherEntityFieldCapitalized = relationships[idx].otherEntityFieldCapitalized;
+                const relationshipRequired = relationships[idx].relationshipRequired;
+                const translationKey = `${i18nKeyPrefix}.${relationshipName}`; _%>
+            <%_ if (relationshipType === 'many-to-one' || ownerSide === true) { _%>
+                <nz-col
+                <%_ if(relationshipType === 'many-to-many' && relationships[idx].ownerSide === true) { _%>
+                    [nzSpan]="24"
+                <%_ } else { _%>
+                    [nzLg]="8"
+                    [nzMd]="12"
+                    [nzSm]="24"
+                <%_ } _%>
+                >
+                    <nz-form-item>
+                        <nz-form-label [nzSpan]="null" <%_ if (relationshipRequired) { _%> nzRequired <%_ } _%>><%= relationshipNameHumanized %></nz-form-label>
+                        <nz-form-control [nzSpan]="null"  nzHasFeedback>
+                    <%_ if (relationshipType === 'many-to-one' || (relationshipType === 'one-to-one' && ownerSide === true)) { _%>
+                            <nz-select style="width: 100%;" name="<%= relationshipName %>"
+                                (nzOpenChange)="loadMore<%= relationshipNameCapitalizedPlural %>()"
+                                (nzScrollToBottom)="loadMore<%= relationshipNameCapitalizedPlural %>(true)"
+                                (nzOnSearch)="loadMore<%= relationshipNameCapitalizedPlural %>(false, $event)"
+                                [nzServerSearch]=true [nzAllowClear]=true [nzShowSearch]=true
+                                formControlName="<%=relationshipFieldName %>Id" >
+                                <nz-option *ngFor="let <%=otherEntityName %>Option of <%=otherEntityNamePlural.toLowerCase() %>;"
+                                    [nzValue]="<%=otherEntityName %>Option.id"
+                                    [nzLabel]="<%=otherEntityName %>Option.id"></nz-option>
+                                <nz-option *ngIf="parentPagingInfo.isLoading" nzDisabled nzCustomContent>
+                                <i class="anticon anticon-loading anticon-spin loading-icon"></i> Loading Data...
+                                </nz-option>
+                            </nz-select>
+                        <%_ if (relationships[idx].relationshipValidate === true) { _%>
+                            <nz-form-explain *ngIf="validateForm.get('<%=relationshipFieldName %>Id').dirty && validateForm.get('<%=relationshipFieldName %>Id').errors">
+                        <%_ if (relationshipRequired) { _%>
+                                <ng-container *ngIf="validateForm.get('<%=relationshipFieldName %>Id').hasError('required')">
+                                    请选择
+                                </ng-container>
+                        <%_ } _%>
+                            </nz-form-explain>
+                        <%_ } _%>
+                    <%_ } else if ((relationshipType === 'many-to-many' && relationships[idx].ownerSide === true)) { _%>
+                            <nz-transfer nzShowSearch
+                                    [nzDataSource]="<%= relationshipFieldNamePlural.toLowerCase() %>"
+                                    [nzOperations]="['to right', 'to left']"
+                                    [nzListStyle]="{'width.px': 250, 'height.px': 300}"
+                                    [nzFilterOption]="<%= otherEntityName %>FilterOption"
+                                    [nzRender]="render"
+                                    [nzFooter]="footer"
+                                    (nzChange)="change<%= relationshipNameCapitalizedPlural %>($event)">
+                                <ng-template #render let-item>
+                                    {{ item.id }}
+                                </ng-template>
+                                <ng-template #footer let-direction>
+                                    <a nz-button (click)="reload<%= relationshipNameCapitalizedPlural %>()" [nzSize]="'small'" style="float: right; margin: 5px;">reload</a>
+                                </ng-template>
+                            </nz-transfer>
+                        <%_ if (relationships[idx].relationshipValidate === true) { _%>
+                            <nz-form-explain *ngIf="validateForm.get('<%=otherEntityNamePlural %>').dirty && validateForm.get('<%=otherEntityNamePlural %>').errors">
+                        <%_ if (relationshipRequired) { _%>
+                                <ng-container *ngIf="validateForm.get('<%=otherEntityNamePlural %>').hasError('required')">
+                                    请选择
+                                </ng-container>
+                        <%_ } _%>
+                            </nz-form-explain>
+                        <%_ } _%>
+                    <%_ } _%>
+                        </nz-form-control>
+                    </nz-form-item>
+                </nz-col>
+            <%_ } _%>
+        <%_ } _%>
+        </nz-row>
+    </ng-template>
+</form>

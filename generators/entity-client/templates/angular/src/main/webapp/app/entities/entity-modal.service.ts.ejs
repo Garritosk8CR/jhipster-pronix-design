@@ -1,0 +1,122 @@
+<%#
+ Copyright 2013-2018 the original author or authors from the JHipster project.
+
+ This file is part of the JHipster project, see https://www.jhipster.tech/
+ for more information.
+
+ Licensed under the Apache License, Version 2.0 (the "License");
+ you may not use this file except in compliance with the License.
+ You may obtain a copy of the License at
+
+      http://www.apache.org/licenses/LICENSE-2.0
+
+ Unless required by applicable law or agreed to in writing, software
+ distributed under the License is distributed on an "AS IS" BASIS,
+ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ See the License for the specific language governing permissions and
+ limitations under the License.
+-%>
+import { Injectable } from '@angular/core';
+import { HttpResponse } from '@angular/common/http';
+import { NzModalRef, NzModalService } from 'ng-zorro-antd';
+import { map } from 'rxjs/operators';
+import { of } from 'rxjs';
+
+import { <%= entityAngularName %>ViewComponent } from 'app/entities/<%= entityModelFileName %>/components/<%= entityModelFileName %>-view.component';
+import { <%= entityAngularName %>FormComponent } from 'app/entities/<%= entityModelFileName %>/components/<%= entityModelFileName %>-form.component';
+import { <%= entityAngularName %>Service } from 'app/entities/<%= entityModelFileName %>/<%= entityModelFileName %>.service';
+import { I<%= entityAngularName %>, <%= entityAngularName %> } from 'app/shared/model/<%= entityModelFileName %>.model';
+
+@Injectable({providedIn: 'root'})
+export class <%= entityAngularName %>ModalService {
+
+    constructor(
+        private <%= entityInstance %>Service: <%= entityAngularName %>Service,
+        private modalService: NzModalService
+    ) {
+    }
+
+
+    createViewModal(id: number, afterOpen?: Function, afterClose?: Function) {
+        let modal;
+        const contentClose = () => modal.close();
+        modal = this.modalService.create({
+            nzTitle: '<%= entityClassPlural %>',
+            nzFooter: [
+                {
+                    label: '编辑',
+                    type: 'primary',
+                    onClick: () => {
+                        this.createEditModal(id);
+                        contentClose();
+                    }
+                }
+            ],
+            nzContent: <%= entityAngularName %>ViewComponent,
+            nzWidth: '800px',
+            nzBodyStyle: {padding: 0},
+            nzComponentParams: {
+                mode: 'tabView',
+                contentResponse: this.<%= entityInstance %>Service.find(id).pipe(map((<%= entityInstance %>: HttpResponse<<%= entityAngularName %>>) => <%= entityInstance %>.body)),
+                contentClose
+            }
+        });
+        if (afterOpen) {
+            modal.afterOpen.subscribe(() => afterOpen());
+        }
+        if (afterClose) {
+            modal.afterClose.subscribe(() => afterClose());
+        }
+        return modal;
+    }
+
+    createEditModal(id?: number, afterOpen?: Function, afterClose?: Function) {
+            let modal;
+            const contentClose = () => modal.close();
+            modal = this.modalService.create({
+                nzTitle: '<%= entityClassPlural %>',
+                nzFooter: [
+                    {
+                        label: '重置',
+                        disabled(contentComponentInstance): boolean {
+                            return contentComponentInstance.isSaving || (contentComponentInstance.validateForm && contentComponentInstance.validateForm.pristine);
+                        },
+                        loading(contentComponentInstance): boolean {
+                            return contentComponentInstance.isSaving;
+                        },
+                        onClick(contentComponentInstance): void {
+                            contentComponentInstance.reset(null);
+                        }
+                    },
+                    {
+                        label: '保存',
+                        type: 'primary',
+                        disabled(contentComponentInstance): boolean {
+                            return contentComponentInstance.validateForm && (!contentComponentInstance.validateForm.valid || contentComponentInstance.validateForm.pristine);
+                        },
+                        loading(contentComponentInstance): boolean {
+                            return contentComponentInstance.isSaving;
+                        },
+                        onClick(contentComponentInstance): void {
+                            contentComponentInstance.save(null, contentComponentInstance.validateForm && contentComponentInstance.validateForm.value);
+                        }
+                    }
+                ],
+                nzContent: <%= entityAngularName %>FormComponent,
+                nzWidth: '800px',
+                nzBodyStyle: {padding: 0},
+                nzComponentParams: {
+                    mode: 'tabForm',
+                    contentResponse: id ? this.<%= entityInstance %>Service.find(id).pipe(map((<%= entityInstance %>: HttpResponse<<%= entityAngularName %>>) => <%= entityInstance %>.body)) : of(new <%= entityAngularName %>()),
+                    contentClose
+                }
+            });
+            if (afterOpen) {
+                modal.afterOpen.subscribe(() => afterOpen());
+            }
+            if (afterClose) {
+                modal.afterClose.subscribe(() => afterClose());
+            }
+            return modal;
+    }
+}

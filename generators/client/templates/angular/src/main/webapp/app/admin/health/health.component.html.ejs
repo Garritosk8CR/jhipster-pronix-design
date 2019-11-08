@@ -1,0 +1,86 @@
+<%#
+ Copyright 2013-2018 the original author or authors from the JHipster project.
+
+ This file is part of the JHipster project, see https://www.jhipster.tech/
+ for more information.
+
+ Licensed under the Apache License, Version 2.0 (the "License");
+ you may not use this file except in compliance with the License.
+ You may obtain a copy of the License at
+
+      http://www.apache.org/licenses/LICENSE-2.0
+
+ Unless required by applicable law or agreed to in writing, software
+ distributed under the License is distributed on an "AS IS" BASIS,
+ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ See the License for the specific language governing permissions and
+ limitations under the License.
+-%>
+<page-header [title]="'健康状态'">
+    <ng-template #breadcrumb>
+        <nz-breadcrumb>
+            <nz-breadcrumb-item>
+                <a [routerLink]="['/admin']">管理</a>
+            </nz-breadcrumb-item>
+            <nz-breadcrumb-item>
+                健康状态
+            </nz-breadcrumb-item>
+        </nz-breadcrumb>
+    </ng-template>
+</page-header>
+
+<div class="page-content">
+    <nz-card class="page-card">
+        <nz-table
+            #table
+            [nzShowPagination]="false"
+            [nzData]="healthData"
+        >
+            <thead>
+            <tr>
+                <th>服务名</th>
+                <th>状态</th>
+                <th>详细</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr *ngFor="let health of table.data">
+                <td>{{health.name}}</td>
+                <td>
+                    <nz-tag [nzColor]="'green'" *ngIf="health.status === 'UP'">{{health.status}}</nz-tag>
+                    <nz-tag [nzColor]="'red'" *ngIf="health.status === 'UNKNOWN'">{{health.status}}</nz-tag>
+                </td>
+                <td>
+                    <a (click)="openDetail(health)">查看</a>
+                </td>
+            </tr>
+            </tbody>
+        </nz-table>
+    </nz-card>
+</div>
+
+<nz-modal
+    *ngIf="showDetail"
+    [(nzVisible)]="showDetail"
+    [nzTitle]="detail.name"
+    [nzWidth]="'756px'"
+    (nzOnCancel)="showDetail = false"
+    [nzStyle]="{ top: '28px' }"
+    [nzFooter]="footer"
+>
+    <ng-template #footer></ng-template>
+    <nz-table #table [nzData]="(detail.details.details | keys)" [nzShowPagination]="false">
+        <thead>
+        <tr>
+            <th>Name</th>
+            <th>Value</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr *ngFor="let entry of table.data">
+            <td>{{entry.key}}</td>
+            <td>{{readableValue(entry.value)}}</td>
+        </tr>
+        </tbody>
+    </nz-table>
+</nz-modal>

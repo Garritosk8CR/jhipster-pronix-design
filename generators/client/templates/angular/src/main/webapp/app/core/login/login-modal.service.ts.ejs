@@ -1,0 +1,62 @@
+<%#
+ Copyright 2013-2018 the original author or authors from the JHipster project.
+
+ This file is part of the JHipster project, see https://www.jhipster.tech/
+ for more information.
+
+ Licensed under the Apache License, Version 2.0 (the "License");
+ you may not use this file except in compliance with the License.
+ You may obtain a copy of the License at
+
+      http://www.apache.org/licenses/LICENSE-2.0
+
+ Unless required by applicable law or agreed to in writing, software
+ distributed under the License is distributed on an "AS IS" BASIS,
+ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ See the License for the specific language governing permissions and
+ limitations under the License.
+-%>
+import { Injectable } from '@angular/core';
+
+import { <%=jhiPrefixCapitalized%>LoginModalComponent } from 'app/shared/login/login.component';
+import {NzModalService} from "ng-zorro-antd";
+import {NzModalRef} from "ng-zorro-antd/src/modal/nz-modal-ref.class";
+
+@Injectable({providedIn: 'root'})
+export class LoginModalService {
+    private modals: Map<string, NzModalRef>;
+
+    constructor(private modalService: NzModalService) {
+        this.modals = new Map<string, NzModalRef>();
+    }
+
+    closeModal(modalId: string) {
+        this.modals.get(modalId).close();
+        this.modals.delete(modalId);
+    }
+
+    open(afterOpen?: Function, afterClose?: Function): NzModalRef {
+        const modalId = String(Math.random() * 100);
+
+        const modalRef = this.modalService.create({
+            nzTitle: '登录',
+            nzContent: BigbugLoginModalComponent,
+            nzWidth: '450px',
+            nzFooter: null,
+            nzComponentParams: {
+                parentModalId: modalId,
+                parentModalService: this
+            }
+        });
+        this.modals.set(modalId, modalRef);
+
+        if (afterOpen) {
+            modalRef.afterOpen.subscribe(() => afterOpen());
+        }
+        if (afterClose) {
+            modalRef.afterClose.subscribe(() => afterClose());
+        }
+        
+        return modalRef;
+    }
+}

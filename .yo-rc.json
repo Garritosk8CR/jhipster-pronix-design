@@ -1,0 +1,10 @@
+{
+  "generator-jhipster-blueprint": {
+    "promptValues": {
+      "githubName": "Garritosk8CR",
+      "authorName": "Emilio M. Rangel",
+      "authorEmail": "emonteror@ucenfotec.ac.cr",
+      "authorUrl": "https://github.com/Garritosk8CR"
+    }
+  }
+}

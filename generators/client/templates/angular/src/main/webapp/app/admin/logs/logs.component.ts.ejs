@@ -1,0 +1,120 @@
+<%#
+ Copyright 2013-2018 the original author or authors from the JHipster project.
+
+ This file is part of the JHipster project, see https://www.jhipster.tech/
+ for more information.
+
+ Licensed under the Apache License, Version 2.0 (the "License");
+ you may not use this file except in compliance with the License.
+ You may obtain a copy of the License at
+
+      http://www.apache.org/licenses/LICENSE-2.0
+
+ Unless required by applicable law or agreed to in writing, software
+ distributed under the License is distributed on an "AS IS" BASIS,
+ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ See the License for the specific language governing permissions and
+ limitations under the License.
+-%>
+import { Component, OnInit } from '@angular/core';
+import { NzMessageService } from 'ng-zorro-antd';
+import { HttpErrorResponse } from '@angular/common/http';
+
+import { Log } from './log.model';
+import { LogsService } from './logs.service';
+import Timer = NodeJS.Timer;
+
+@Component({
+    selector: '<%= jhiPrefixDashed %>-logs',
+    templateUrl: './logs.component.html',
+    styleUrls: ['logs.scss']
+})
+export class LogsComponent implements OnInit {
+
+    loggers: Log[];
+    rawData: Log[];
+    filter: string;
+    orderProp: string;
+    reverse: boolean;
+    filters: Log;
+    timer: Timer;
+    marks = {
+        1: '跟踪',
+        2: '调试',
+        3: '信息',
+        4: '警告',
+        5: '错误',
+        6: '关闭'
+    };
+    numberTolevel = {
+        1: 'TRACE',
+        2: 'DEBUG',
+        3: 'INFO',
+        4: 'WARN',
+        5: 'ERROR',
+        6: 'OFF'
+    };
+
+    constructor(
+        private logsService: LogsService,
+        private messageService: NzMessageService
+    ) {
+        this.filter = '';
+        this.orderProp = 'name';
+        this.reverse = false;
+        this.filters = new Log('', '');
+    }
+
+    ngOnInit() {
+        this.logsService.findAll().subscribe((response) => {
+            this.loggers = [...response.body];
+            this.rawData = response.body;
+        });
+    }
+
+    changeLevel(number: any, item: Log) {
+        item.level = this.numberTolevel[number];
+        if (this.timer) {
+            clearTimeout(this.timer);
+        }
+        this.timer = setTimeout(() => {
+            this.timer = null;
+            this.logsService.changeLevel(item).subscribe(res => {
+                this.messageService.success(`${item.name} 成功修改为 ${this.marks[number]}`);
+            }, (res: HttpErrorResponse) => this.messageService.error(res.message));
+        }, 380);
+    }
+
+    search() {
+        const list = [];
+        this.rawData.forEach(item => {
+            if (item.name.indexOf(this.filters.name) > -1) {
+                list.push(item);
+            }
+        });
+        this.loggers = list;
+    }
+
+    trackId(index: number, item: Log) {
+        return item.name;
+    }
+
+    levelToNumber(val: string) {
+        switch (val) {
+            case 'TRACE':
+                return 1;
+            case 'DEBUG':
+                return 2;
+            case 'INFO':
+                return 3;
+            case 'WARN':
+                return 4;
+            case 'ERROR':
+                return 5;
+            case 'OFF':
+                return 6;
+            default:
+                return 6;
+        }
+    }
+}

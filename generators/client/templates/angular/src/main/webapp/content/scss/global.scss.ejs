@@ -1,0 +1,193 @@
+<%#Copyright 2013-2018 the original author or authors from the JHipster project.
+
+ This file is part of the JHipster project, see https://www.jhipster.tech/ for
+        more information. Licensed under the Apache License,
+    Version 2 (the "License");
+youmay not use this file except in compliance with the License.
+ You may obtain a copy of the License at
+
+      http://www.apache.org/licenses/LICENSE-2.0 Unless
+        required by applicable law or agreed to in writing,
+    software distributed under the License is distributed on an "AS IS" BASIS,
+    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND,
+    either express or implied. See the License for the specific language
+        governing permissions and limitations under the License. -%>
+/* ==============================================================
+Ant design tweaks
+===============================================================*/
+a:hover {
+    cursor: pointer;
+}
+
+.hand,
+[jhisortby] {
+    cursor: pointer;
+}
+
+/* ==========================================================================
+Browser Upgrade Prompt
+========================================================================== */
+.browserupgrade {
+    margin: 0.2em 0;
+    background: #4834d4;
+    color: #4834d4;
+    padding: 0.2em 0;
+}
+
+/* ==========================================================================
+Generic styles
+========================================================================== */
+/* jhipster-needle-scss-add-main JHipster will add new css style */
+
+body {
+    .content__title {
+        margin-right: 0px;
+        margin-left: 0px;
+
+        .row {
+            margin-right: 0px;
+            margin-left: 0px;
+        }
+    }
+
+    .page-content {
+        padding: 0 16px 16px 16px;
+    }
+
+    nz-input-number, nz-date-picker, .ant-input-number {
+        width: 100%;
+    }
+
+    nz-picker {
+        width: 100%;
+        display: block;
+        > span {
+            width: 100%;
+        }
+    }
+
+    .ant-form-item-children {
+        width: 100%;
+        display: block;
+    }
+
+    .custom-filter-dropdown {
+        padding: 8px;
+        border-radius: 6px;
+        background: #fff;
+        box-shadow: 0 1px 6px rgba(0, 0, 0, .2);
+        > :nth-child(1) {
+            width: 220px;
+        }
+    }
+}
+
+/* ==========================================================================
+Entities list component styles
+========================================================================== */
+
+.entities-list {
+
+    :global {
+
+        .card-info {
+            margin-top: 16px;
+            margin-left: 40px;
+            & > div {
+                position: relative;
+                text-align: left;
+                float: left;
+                width: 50%;
+                p {
+                    line-height: 32px;
+                    font-size: 24px;
+                    margin: 0;
+                }
+                p:first-child {
+                    color: rgba(0, 0, 0, 0.45);
+                    font-size: 12px;
+                    line-height: 20px;
+                    margin-bottom: 4px;
+                }
+            }
+        }
+
+        .wan {
+            position: relative;
+            top: -2px;
+            font-size: 14px;
+            font-style: normal;
+            line-height: 20px;
+            margin-left: 2px;
+        }
+
+        .block-description {
+            overflow: hidden;
+            text-overflow: ellipsis;
+            word-wrap: break-word;
+            -webkit-line-clamp: 3;
+            display: -webkit-box;
+            -webkit-box-orient: vertical;
+        }
+
+        .card-list-btn-block {
+            width: 100%;
+            height: 183px;
+        }
+
+        .filter-form {
+            margin-bottom: 16px;
+            nz-form-item {
+                width: 100%;
+                display: inline-flex;
+                justify-content: space-between;
+                nz-form-control {
+                    padding-left: 16px;
+                    padding-right: 16px;
+                    width: 100%;
+                    [nz-input] {
+                        width: 100%;
+                    }
+                }
+            }
+            [nz-input] {
+                width: 100%;
+            }
+        }
+
+        .search-form-control {
+            display: inline-flex;
+            justify-content: flex-end;
+            align-items: center;
+            margin-top: 4px;
+            padding-right: 16px;
+        }
+
+        .custom-filter-dropdown {
+            :first-child {
+                min-width: 180px;
+            }
+        }
+
+        .flex-1 {
+            flex: 1 !important;
+        }
+
+        .text-lg {
+            font-size: 18px !important;
+        }
+
+        .basic-list-btn-block {
+            display: block !important;
+            width: 100%;
+        }
+
+        .basic-list-input-group {
+            width: 270px;
+        }
+
+        .width-md {
+            width: 240px !important;
+        }
+    }
+}

@@ -1,0 +1,76 @@
+{
+  "name": "generator-jhipster-pronix-design",
+  "version": "0.0.2",
+  "description": "Custom template blueprint for JHipster client ",
+  "keywords": [
+    "yeoman-generator",
+    "jhipster-blueprint",
+    "jhipster-5"
+  ],
+  "homepage": "https://github.com/Garritosk8CR/generator-jhipster-pronix-design",
+  "author": {
+    "name": "Emilio M. Rangel",
+    "email": "emonteror@ucenfotec.ac.cr",
+    "url": "https://github.com/Garritosk8CR"
+  },
+  "files": [
+    "generators"
+  ],
+  "main": "generators/app/index.js",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Garritosk8CR/generator-jhipster-pronix-design.git"
+  },
+  "dependencies": {
+    "ajv": "^5.5.2",
+    "ajv-keywords": "^2.1.1",
+    "chalk": "2.4.1",
+    "ejs": "2.6.1",
+    "generator-jhipster": ">=5.0.0",
+    "glob": "7.1.2",
+    "gulp-filter": "5.1.0",
+    "insight": "0.10.1",
+    "jhipster-core": "^5.0.0",
+    "js-yaml": "^3.13.1",
+    "lodash": "^4.17.15",
+    "meow": "5.0.0",
+    "mkdirp": "0.5.1",
+    "pluralize": "7.0.0",
+    "prettier": "1.13.5",
+    "randexp": "0.4.9",
+    "semver": "5.5.0",
+    "shelljs": "0.8.2",
+    "through2": "2.0.3",
+    "yeoman-environment": "2.3.0",
+    "yeoman-generator": "2.0.5"
+  },
+  "devDependencies": {
+    "chai": "4.1.2",
+    "ejs-lint": "0.3.0",
+    "eslint": "^4.19.1",
+    "eslint-config-airbnb-base": "13.0.0",
+    "eslint-plugin-import": "^2.18.2",
+    "fs-extra": "6.0.1",
+    "jsdoc": "^3.6.3",
+    "mocha": "5.2.0",
+    "sinon": "6.0.0",
+    "yeoman-assert": "3.1.1",
+    "yeoman-test": "1.7.2"
+  },
+  "scripts": {
+    "lint": "eslint .",
+    "lint-fix": "npm run lint -- --fix",
+    "pretest": "npm run lint",
+    "test": "npm run test:unit -- test/*.spec.js",
+    "test:unit": "mocha --timeout 20000 --slow 0 --reporter spec",
+    "jsdoc": "jsdoc --configure jsdoc-conf.json",
+    "release": "git push && git push --tags && npm publish",
+    "release:patch": "npm version patch -a -m \"Update to %s\" && npm run release",
+    "release:minor": "npm version minor -a -m \"Update to %s\" && npm run release",
+    "release:major": "npm version major -a -m \"Update to %s\" && npm run release"
+  },
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/Garritosk8CR/generator-jhipster-pronix-design/issues"
+  }
+}
